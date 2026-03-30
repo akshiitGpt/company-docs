@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: #0d1117;
+  color: #e6edf3;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #161b22;
+}
+::-webkit-scrollbar-thumb {
+  background: #30363d;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #484f58;
+}
+
+/* Markdown preview styling */
+.prose-docs {
+  @apply text-text-primary;
+}
+.prose-docs h1 {
+  @apply text-text-primary border-b border-border-default pb-2 mb-4;
+}
+.prose-docs h2 {
+  @apply text-text-primary border-b border-border-muted pb-1 mb-3 mt-6;
+}
+.prose-docs h3 {
+  @apply text-text-primary mb-2 mt-4;
+}
+.prose-docs a {
+  @apply text-accent-blue hover:underline;
+}
+.prose-docs code {
+  @apply bg-surface-2 text-accent-orange px-1.5 py-0.5 rounded text-sm;
+}
+.prose-docs pre {
+  @apply bg-surface-2 border border-border-default rounded-md p-4 overflow-x-auto;
+}
+.prose-docs pre code {
+  @apply bg-transparent text-text-primary px-0 py-0;
+}
+.prose-docs blockquote {
+  @apply border-l-4 border-border-default pl-4 text-text-secondary italic;
+}
+.prose-docs table {
+  @apply w-full border-collapse;
+}
+.prose-docs th {
+  @apply bg-surface-2 border border-border-default px-3 py-2 text-left text-sm font-semibold;
+}
+.prose-docs td {
+  @apply border border-border-default px-3 py-2 text-sm;
+}
+.prose-docs ul {
+  @apply list-disc pl-6;
+}
+.prose-docs ol {
+  @apply list-decimal pl-6;
+}
+.prose-docs li {
+  @apply mb-1;
+}
+.prose-docs hr {
+  @apply border-border-default my-6;
+}
+.prose-docs img {
+  @apply max-w-full rounded;
+}
+
+/* Editor textarea */
+.editor-textarea {
+  @apply w-full h-full bg-surface-0 text-text-primary font-mono text-sm
+    p-4 resize-none outline-none border-none;
+  tab-size: 2;
+  line-height: 1.6;
+}
+.editor-textarea::placeholder {
+  @apply text-text-muted;
+}
