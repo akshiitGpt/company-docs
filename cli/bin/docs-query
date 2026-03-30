@@ -1,0 +1,207 @@
+#!/bin/bash
+set -euo pipefail
+
+# docs-query — CLI tool for searching and managing the company knowledge base
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+LIB_DIR="$SCRIPT_DIR/../lib"
+
+# Source library files
+source "$LIB_DIR/search.sh"
+source "$LIB_DIR/index.sh"
+source "$LIB_DIR/format.sh"
+
+VERSION="1.0.0"
+
+usage() {
+    cat << 'EOF'
+docs-query — Company knowledge base CLI
+
+Usage:
+  docs-query search <query> [options]     Full-text search across docs
+  docs-query get <path>                   Get a specific document
+  docs-query list [options]               List all documents
+  docs-query meta <path> [options]        Get document metadata
+  docs-query reindex                      Rebuild the master index
+  docs-query version                      Show version
+  docs-query help                         Show this help
+
+Search options:
+  --category <name>     Filter by category (architecture|repos|linear|runbooks|team)
+  --tag <name>          Search by tag
+  --json                Output in JSON format
+
+List options:
+  --category <name>     Filter by category
+  --json                Output in JSON format
+
+Meta options:
+  --json                Output in JSON format
+
+Environment:
+  COMPANY_DOCS_HOME     Root directory of company-docs (default: current dir)
+EOF
+}
+
+cmd_search() {
+    local query=""
+    local category=""
+    local tag=""
+    local json_output=false
+
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            --category)
+                category="$2"
+                shift 2
+                ;;
+            --tag)
+                tag="$2"
+                shift 2
+                ;;
+            --json)
+                json_output=true
+                shift
+                ;;
+            -*)
+                echo "Unknown option: $1" >&2
+                return 1
+                ;;
+            *)
+                if [ -z "$query" ]; then
+                    query="$1"
+                else
+                    query="$query $1"
+                fi
+                shift
+                ;;
+        esac
+    done
+
+    # Tag-only search
+    if [ -n "$tag" ] && [ -z "$query" ]; then
+        if $json_output; then
+            local files
+            files=$(search_by_tag "$tag")
+            if [ -z "$files" ]; then
+                echo '[]'
+                return 0
+            fi
+            echo "$files" | jq -R -s 'split("\n") | map(select(. != ""))'
+        else
+            search_by_tag "$tag"
+        fi
+        return 0
+    fi
+
+    if [ -z "$query" ]; then
+        echo "Error: search query required" >&2
+        echo "Usage: docs-query search <query> [--category <name>] [--tag <name>] [--json]" >&2
+        return 1
+    fi
+
+    if $json_output; then
+        search_json "$query" "$category"
+    else
+        search_docs "$query" "$category"
+    fi
+}
+
+cmd_get() {
+    if [ $# -eq 0 ]; then
+        echo "Error: file path required" >&2
+        echo "Usage: docs-query get <path>" >&2
+        return 1
+    fi
+
+    get_doc "$1"
+}
+
+cmd_list() {
+    local category=""
+    local json_output=false
+
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            --category)
+                category="$2"
+                shift 2
+                ;;
+            --json)
+                json_output=true
+                shift
+                ;;
+            *)
+                echo "Unknown option: $1" >&2
+                return 1
+                ;;
+        esac
+    done
+
+    if $json_output; then
+        list_docs_json "$category"
+    else
+        printf "%-50s  %-15s  %s\n" "PATH" "CATEGORY" "TAGS"
+        printf "%-50s  %-15s  %s\n" "----" "--------" "----"
+        list_docs "$category"
+    fi
+}
+
+cmd_meta() {
+    if [ $# -eq 0 ]; then
+        echo "Error: file path required" >&2
+        echo "Usage: docs-query meta <path> [--json]" >&2
+        return 1
+    fi
+
+    local filepath="$1"
+    shift
+    local json_output=false
+
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            --json)
+                json_output=true
+                shift
+                ;;
+            *)
+                echo "Unknown option: $1" >&2
+                return 1
+                ;;
+        esac
+    done
+
+    if $json_output; then
+        get_meta_json "$filepath"
+    else
+        get_meta "$filepath"
+    fi
+}
+
+cmd_reindex() {
+    rebuild_index
+}
+
+# Main dispatch
+if [ $# -eq 0 ]; then
+    usage
+    exit 0
+fi
+
+command="$1"
+shift
+
+case "$command" in
+    search)  cmd_search "$@" ;;
+    get)     cmd_get "$@" ;;
+    list)    cmd_list "$@" ;;
+    meta)    cmd_meta "$@" ;;
+    reindex) cmd_reindex ;;
+    version) echo "docs-query v$VERSION" ;;
+    help)    usage ;;
+    *)
+        echo "Unknown command: $command" >&2
+        usage
+        exit 1
+        ;;
+esac

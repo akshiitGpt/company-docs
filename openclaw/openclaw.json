@@ -1,0 +1,81 @@
+{
+  // Company Docs Suite — OpenClaw Configuration
+  "env": {
+    "COMPANY_DOCS_HOME": "${COMPANY_DOCS_HOME}",
+    "LINEAR_API_KEY": "${LINEAR_API_KEY}",
+    "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+  },
+  "agents": {
+    "defaults": {
+      "model": "claude-sonnet-4-5",
+      "subagents": {
+        "model": "claude-haiku-4-5",
+        "runTimeoutSeconds": 120,
+        "maxSpawnDepth": 2,
+        "maxChildrenPerAgent": 4,
+        "maxConcurrent": 3,
+        "archiveAfterMinutes": 30
+      }
+    },
+    "list": [
+      {
+        "id": "orchestrator",
+        "model": "claude-opus-4-6",
+        "workspace": "./workspace-orchestrator",
+        "default": true,
+        "groupChat": {
+          "mentionPatterns": ["@docs", "@docbot"]
+        }
+      },
+      {
+        "id": "searcher",
+        "model": "claude-haiku-4-5",
+        "workspace": "./workspace-search"
+      },
+      {
+        "id": "summarizer",
+        "model": "claude-sonnet-4-5",
+        "workspace": "./workspace-summary"
+      },
+      {
+        "id": "syncer",
+        "model": "claude-haiku-4-5",
+        "workspace": "./workspace-sync"
+      },
+      {
+        "id": "writer",
+        "model": "claude-sonnet-4-5",
+        "workspace": "./workspace-writer"
+      }
+    ]
+  },
+  "bindings": [
+    {
+      "agentId": "orchestrator",
+      "match": { "channel": "slack" }
+    },
+    {
+      "agentId": "orchestrator",
+      "match": { "channel": "telegram" }
+    },
+    {
+      "agentId": "orchestrator",
+      "match": { "channel": "webchat" }
+    },
+    {
+      "agentId": "orchestrator",
+      "match": { "channel": "discord" }
+    }
+  ],
+  "tools": {
+    "allow": ["read", "exec", "process", "sessions_spawn", "subagents", "sessions_list", "sessions_history", "memory_search", "memory_get"],
+    "subagents": {
+      "tools": {
+        "deny": ["gateway", "cron", "message", "sessions_spawn"]
+      }
+    }
+  },
+  "heartbeat": {
+    "intervalMinutes": 60
+  }
+}
