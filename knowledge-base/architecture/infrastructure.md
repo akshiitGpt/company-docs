@@ -3,7 +3,7 @@ title: "Infrastructure"
 category: architecture
 tags: [infrastructure, cloud, deployment]
 owner: "@devops"
-last_updated: "2026-03-30"
+last_updated: "2026-04-30"
 source: manual
 ---
 
