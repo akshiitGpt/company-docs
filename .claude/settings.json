@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git:*)",
+      "Bash(docs-query:*)",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(cd:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(chmod:*)",
+      "Bash(mkdir:*)",
+      "Bash(ln:*)",
+      "Bash(export:*)",
+      "Bash(curl:*)",
+      "Bash(fuser:*)",
+      "Bash(pkill:*)",
+      "Bash(kill:*)",
+      "Bash(sleep:*)",
+      "Bash(echo:*)",
+      "Bash(source:*)",
+      "Read",
+      "Edit",
+      "Write",
+      "Glob",
+      "Grep"
+    ]
+  },
+  "env": {
+    "COMPANY_DOCS_HOME": "/home/akshit/company-docs"
+  }
+}
