@@ -7,7 +7,6 @@ interface FileEditorProps {
   content: string;
   onSave: (content: string) => Promise<void>;
   onPreviewToggle: () => void;
-  isPreview: boolean;
 }
 
 export default function FileEditor({
@@ -15,7 +14,6 @@ export default function FileEditor({
   content: initialContent,
   onSave,
   onPreviewToggle,
-  isPreview,
 }: FileEditorProps) {
   const [content, setContent] = useState(initialContent);
   const [saving, setSaving] = useState(false);
@@ -54,48 +52,33 @@ export default function FileEditor({
   }, [handleSave]);
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full fade-in">
       {/* Toolbar */}
-      <div className="flex items-center justify-between px-4 py-2 bg-surface-1 border-b border-border-default">
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-text-secondary font-mono">
+      <div className="flex items-center justify-between px-5 py-2.5 bg-surface border-b border-border-light">
+        <div className="flex items-center gap-2.5">
+          <span className="text-[13px] text-secondary font-mono">
             {path}
           </span>
           {dirty && (
-            <span className="w-2 h-2 rounded-full bg-accent-orange" />
+            <span className="inline-flex items-center gap-1 text-[11px] text-warn bg-warn-bg px-1.5 py-0.5 rounded-sm font-medium">
+              Unsaved
+            </span>
           )}
         </div>
         <div className="flex items-center gap-2">
-          {/* Edit / Preview toggle */}
-          <div className="flex bg-surface-3 rounded-md overflow-hidden border border-border-default">
-            <button
-              onClick={() => isPreview && onPreviewToggle()}
-              className={`px-3 py-1 text-xs font-medium transition-colors ${
-                !isPreview
-                  ? "bg-surface-4 text-text-primary"
-                  : "text-text-secondary hover:text-text-primary"
-              }`}
-            >
-              Edit
-            </button>
-            <button
-              onClick={() => !isPreview && onPreviewToggle()}
-              className={`px-3 py-1 text-xs font-medium transition-colors ${
-                isPreview
-                  ? "bg-surface-4 text-text-primary"
-                  : "text-text-secondary hover:text-text-primary"
-              }`}
-            >
-              Preview
-            </button>
-          </div>
+          <button
+            onClick={onPreviewToggle}
+            className="px-3 py-1.5 text-[12px] font-medium text-secondary hover:text-primary bg-surface-subtle hover:bg-surface-active rounded-sm transition-colors"
+          >
+            Preview
+          </button>
           <button
             onClick={handleSave}
             disabled={!dirty || saving}
-            className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
+            className={`px-3.5 py-1.5 text-[12px] font-medium rounded-sm transition-all ${
               dirty && !saving
-                ? "bg-accent-green text-surface-0 hover:opacity-90"
-                : "bg-surface-3 text-text-muted cursor-not-allowed"
+                ? "bg-accent text-white hover:bg-accent-hover shadow-xs"
+                : "bg-surface-subtle text-muted cursor-not-allowed"
             }`}
           >
             {saving ? "Saving..." : "Save & Push"}
@@ -103,8 +86,8 @@ export default function FileEditor({
         </div>
       </div>
 
-      {/* Editor area */}
-      <div className="flex-1 overflow-hidden">
+      {/* Editor */}
+      <div className="flex-1 overflow-hidden bg-surface">
         <textarea
           value={content}
           onChange={(e) => handleChange(e.target.value)}

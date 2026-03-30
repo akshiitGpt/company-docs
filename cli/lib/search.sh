@@ -3,6 +3,14 @@
 
 KNOWLEDGE_BASE_DIR="${COMPANY_DOCS_HOME:-.}/knowledge-base"
 
+# Convert multi-word query into regex OR pattern
+# "onboarding setup info" → "onboarding|setup|info"
+to_or_pattern() {
+    local query="$1"
+    # Trim whitespace, replace spaces with |
+    echo "$query" | sed 's/^ *//;s/ *$//' | sed 's/  */ /g' | tr ' ' '|'
+}
+
 search_docs() {
     local query="$1"
     local category="$2"
@@ -17,7 +25,10 @@ search_docs() {
         return 1
     fi
 
-    rg -i --type md -C 3 --heading --line-number "$query" "$search_path"
+    local pattern
+    pattern=$(to_or_pattern "$query")
+
+    rg -i --type md -C 3 --heading --line-number "$pattern" "$search_path"
 }
 
 search_by_tag() {
@@ -39,7 +50,10 @@ search_json() {
         return 1
     fi
 
-    rg -i --type md --json "$query" "$search_path" 2>/dev/null | \
+    local pattern
+    pattern=$(to_or_pattern "$query")
+
+    rg -i --type md --json "$pattern" "$search_path" 2>/dev/null | \
         jq -s '[.[] | select(.type == "match") | {
             file: .data.path.text,
             line: .data.line_number,

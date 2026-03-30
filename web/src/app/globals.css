@@ -2,87 +2,71 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  background-color: #0d1117;
-  color: #e6edf3;
-}
-
-/* Scrollbar styling */
+/* ── Scrollbar ── */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #161b22;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #30363d;
-  border-radius: 4px;
+  background: #D4D1CA;
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #484f58;
+  background: #B8B5AE;
 }
 
-/* Markdown preview styling */
-.prose-docs {
-  @apply text-text-primary;
-}
-.prose-docs h1 {
-  @apply text-text-primary border-b border-border-default pb-2 mb-4;
-}
-.prose-docs h2 {
-  @apply text-text-primary border-b border-border-muted pb-1 mb-3 mt-6;
-}
-.prose-docs h3 {
-  @apply text-text-primary mb-2 mt-4;
-}
-.prose-docs a {
-  @apply text-accent-blue hover:underline;
-}
-.prose-docs code {
-  @apply bg-surface-2 text-accent-orange px-1.5 py-0.5 rounded text-sm;
-}
-.prose-docs pre {
-  @apply bg-surface-2 border border-border-default rounded-md p-4 overflow-x-auto;
-}
-.prose-docs pre code {
-  @apply bg-transparent text-text-primary px-0 py-0;
-}
-.prose-docs blockquote {
-  @apply border-l-4 border-border-default pl-4 text-text-secondary italic;
-}
-.prose-docs table {
-  @apply w-full border-collapse;
-}
-.prose-docs th {
-  @apply bg-surface-2 border border-border-default px-3 py-2 text-left text-sm font-semibold;
-}
-.prose-docs td {
-  @apply border border-border-default px-3 py-2 text-sm;
-}
-.prose-docs ul {
-  @apply list-disc pl-6;
-}
-.prose-docs ol {
-  @apply list-decimal pl-6;
-}
-.prose-docs li {
-  @apply mb-1;
-}
-.prose-docs hr {
-  @apply border-border-default my-6;
-}
-.prose-docs img {
-  @apply max-w-full rounded;
+/* ── Selection ── */
+::selection {
+  background: #C4421A20;
 }
 
-/* Editor textarea */
+/* ── Focus ── */
+*:focus-visible {
+  outline: 2px solid #C4421A;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ── Tree guide lines ── */
+.tree-indent {
+  position: relative;
+}
+.tree-indent::before {
+  content: "";
+  position: absolute;
+  left: 11px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #E0DDD6;
+}
+
+/* ── Editor ── */
 .editor-textarea {
-  @apply w-full h-full bg-surface-0 text-text-primary font-mono text-sm
-    p-4 resize-none outline-none border-none;
+  @apply w-full h-full bg-surface text-primary font-mono text-sm
+    p-6 resize-none outline-none border-none leading-relaxed;
   tab-size: 2;
-  line-height: 1.6;
 }
 .editor-textarea::placeholder {
-  @apply text-text-muted;
+  @apply text-muted;
+}
+
+/* ── Transitions ── */
+.fade-in {
+  animation: fadeIn 0.2s ease-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-up {
+  animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
