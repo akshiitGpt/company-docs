@@ -7,7 +7,7 @@ last_updated: "2026-03-30"
 source: manual
 ---
 
-# Infrastructure
+# Infrastructur
 
 ## Cloud Provider
 Describe the cloud setup.
