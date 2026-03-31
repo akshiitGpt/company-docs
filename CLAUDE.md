@@ -1,6 +1,6 @@
 # Company Docs Suite
 
-Ruh AI's grep-able markdown knowledge base + CLI tool + sync scripts + web UI.
+Ruh AI's grep-able markdown knowledge base + sync scripts + web UI.
 
 ## Project Structure
 
@@ -25,9 +25,6 @@ company-docs/
 │   ├── workflows/           # End-to-end request flows (agent-chat-flow, agent-creation-flow)
 │   ├── runbooks/            # deployments, debugging, incident-response
 │   └── references/          # api-endpoints, environment-variables, feature-flags
-├── cli/                     # docs-query CLI tool (bash + ripgrep)
-│   ├── bin/docs-query       # Main executable
-│   └── lib/                 # search.sh, index.sh, format.sh
 ├── sync/                    # Data sync scripts (Linear, GitHub, git logs)
 └── web/                     # Next.js web UI
     └── src/
@@ -36,29 +33,48 @@ company-docs/
         └── lib/             # git.ts (server-side git ops), auth.ts, types.ts
 ```
 
+## Searching the Knowledge Base
+
+```bash
+# Set the knowledge base path
+KB="$COMPANY_DOCS_HOME/knowledge-base"
+
+# Full-text search
+rg -i "redis streams" "$KB"
+
+# Search within a section
+rg -i "deploy" "$KB/runbooks/"
+
+# Find files by tag
+rg "tags:.*kafka" "$KB"
+
+# Find files by name
+find "$KB" -name "*agent*" -type f
+
+# Read a specific doc
+cat "$KB/services/agent-platform/overview.md"
+
+# Read just the first 50 lines (summary)
+head -n 50 "$KB/services/agent-platform/overview.md"
+
+# Read a specific line range
+sed -n '30,80p' "$KB/workflows/agent-chat-flow.md"
+
+# List all docs
+find "$KB" -name '*.md' -type f | sort
+```
+
 ## Key Commands
 
 ```bash
-# CLI tool — works from any directory
-docs-query search "query"                    # Multi-word OR search across all docs
-docs-query search "deploy" --category runbooks  # Filter by category
-docs-query search --tag kubernetes           # Tag search
-docs-query search "auth" --json              # JSON output
-docs-query get services/agent-platform/overview.md  # Get specific doc
-docs-query list                              # List all docs
-docs-query list --category services --json   # Filtered list
-docs-query meta services/agent-platform/overview.md --json  # Metadata only
-docs-query reindex                           # Rebuild INDEX.md
-
 # Web UI
 cd web && npm run dev                        # Dev server on :3000
 cd web && npx next build && npx next start   # Production
 
 # Sync
-./sync/sync-all.sh                           # Full sync (Linear + GitHub + git logs + reindex)
+./sync/sync-all.sh                           # Full sync (Linear + GitHub + git logs)
 ./sync/linear-sync.sh                        # Linear only (requires LINEAR_API_KEY)
 ./sync/repo-sync.sh                          # GitHub repos only (requires GITHUB_TOKEN)
-./sync/index-rebuild.sh                      # Rebuild INDEX.md
 ```
 
 ## Environment Variables
@@ -101,10 +117,6 @@ Agents should follow this search order:
 5. data/events/ or data/schemas/ → data contracts
 6. repos/<name>.md → code navigation
 ```
-
-### Search Behavior
-
-The CLI splits multi-word queries into OR regex: `"redis streams"` becomes `redis|streams` matching any word. Results are not ranked — all matches returned flat.
 
 ### Web UI
 

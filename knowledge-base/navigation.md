@@ -46,18 +46,19 @@ head -n 50 knowledge-base/services/agent-platform/overview.md
 sed -n '30,80p' knowledge-base/architecture/data-flow.md
 ```
 
-### 4. Follow Cross-References
-
-Documents link to related files with `See also:` sections. Follow these to navigate between topics.
-
-### 5. Use the CLI Tool
+### 4. Find Files by Name
 
 ```bash
-docs-query search "redis streams"
-docs-query search "agent" --category services
-docs-query list --json
-docs-query meta services/agent-platform/overview.md --json
+# Find files related to a topic
+find knowledge-base -name "*agent*" -type f
+
+# List all docs
+find knowledge-base -name '*.md' -type f | sort
 ```
+
+### 5. Follow Cross-References
+
+Documents link to related files with `See Also:` sections. Follow these to navigate between topics.
 
 ## Document Structure
 

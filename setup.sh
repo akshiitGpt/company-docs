@@ -4,17 +4,13 @@ set -euo pipefail
 echo "=== Company Docs Suite Setup ==="
 
 # 1. Check dependencies
-echo "[1/6] Checking dependencies..."
+echo "[1/4] Checking dependencies..."
 MISSING=()
 command -v rg    >/dev/null 2>&1 || MISSING+=("ripgrep (rg)")
 command -v jq    >/dev/null 2>&1 || MISSING+=("jq")
 command -v git   >/dev/null 2>&1 || MISSING+=("git")
-command -v curl  >/dev/null 2>&1 || MISSING+=("curl")
 
 # Optional deps
-if ! command -v yq >/dev/null 2>&1; then
-    echo "  NOTE: yq not found (optional). JSON metadata will use fallback parser."
-fi
 if ! command -v node >/dev/null 2>&1; then
     echo "  NOTE: node not found. Required only for the web UI."
 fi
@@ -28,42 +24,23 @@ fi
 
 echo "  All required dependencies found."
 
-# 2. Initialize knowledge base git repo
-echo "[2/6] Initializing knowledge base..."
-mkdir -p knowledge-base/{architecture/adr,repos,linear,runbooks,team}
-if [ ! -d knowledge-base/.git ]; then
-    cd knowledge-base && git init && cd ..
-    echo "  Initialized git repo in knowledge-base/"
-else
-    echo "  Git repo already exists in knowledge-base/"
-fi
-
-# 3. Verify templates exist
-echo "[3/6] Verifying templates..."
-for template in knowledge-base/architecture/adr/TEMPLATE.md knowledge-base/repos/TEMPLATE.md; do
-    if [ -f "$template" ]; then
-        echo "  Found: $template"
+# 2. Verify knowledge base structure
+echo "[2/4] Verifying knowledge base..."
+EXPECTED_DIRS=(architecture services repos data infra workflows runbooks references)
+for dir in "${EXPECTED_DIRS[@]}"; do
+    if [ -d "knowledge-base/$dir" ]; then
+        echo "  Found: knowledge-base/$dir"
     else
-        echo "  WARNING: Missing template: $template"
+        echo "  WARNING: Missing directory: knowledge-base/$dir"
     fi
 done
 
-# 4. Install CLI
-echo "[4/6] Installing docs-query CLI..."
-chmod +x cli/bin/docs-query
-chmod +x cli/lib/*.sh
-
-INSTALL_DIR="${HOME}/.local/bin"
-mkdir -p "$INSTALL_DIR"
-
-if [ -L "$INSTALL_DIR/docs-query" ] || [ -e "$INSTALL_DIR/docs-query" ]; then
-    rm "$INSTALL_DIR/docs-query"
+# 3. Check env vars
+echo "[3/4] Checking environment..."
+if [ -z "${COMPANY_DOCS_HOME:-}" ]; then
+    echo "  WARNING: COMPANY_DOCS_HOME not set. Add to your shell profile:"
+    echo "    export COMPANY_DOCS_HOME=\"$(pwd)\""
 fi
-ln -sf "$(pwd)/cli/bin/docs-query" "$INSTALL_DIR/docs-query"
-echo "  Linked: $INSTALL_DIR/docs-query"
-
-# 5. Check env vars
-echo "[5/6] Checking environment..."
 if [ -z "${LINEAR_API_KEY:-}" ]; then
     echo "  WARNING: LINEAR_API_KEY not set. Linear sync will not work."
 fi
@@ -74,19 +51,22 @@ fi
 # Make sync scripts executable
 chmod +x sync/*.sh
 
-# 6. Build initial index
-echo "[6/6] Building initial index..."
-export COMPANY_DOCS_HOME="$(pwd)"
-source cli/lib/index.sh
-rebuild_index
+# 4. Verify search works
+echo "[4/4] Verifying search..."
+DOC_COUNT=$(find knowledge-base -name '*.md' -type f | wc -l)
+echo "  Found $DOC_COUNT documents in knowledge-base/"
+echo "  Test search: rg -i 'agent-platform' knowledge-base/ -l"
+rg -i 'agent-platform' knowledge-base/ -l 2>/dev/null | head -5 | sed 's/^/    /'
 
 echo ""
 echo "=== Setup Complete ==="
 echo "Knowledge base: $(pwd)/knowledge-base"
-echo "CLI tool: docs-query (check: docs-query list)"
+echo "Documents: $DOC_COUNT"
+echo ""
+echo "Search with:"
+echo "  rg -i \"query\" knowledge-base/"
+echo "  find knowledge-base -name '*.md' | sort"
 echo ""
 echo "Next steps:"
-echo "  1. Copy .env.example to .env and fill in your API keys"
-echo "  2. Add COMPANY_DOCS_HOME=\"$(pwd)\" to your shell profile"
-echo "  3. Add ~/.local/bin to your PATH if not already there"
-echo "  4. Write your first docs in knowledge-base/"
+echo "  1. Add COMPANY_DOCS_HOME=\"$(pwd)\" to your shell profile"
+echo "  2. Start browsing: cat knowledge-base/index.md"
