@@ -1,18 +1,30 @@
 # Company Docs Suite
 
-A grep-able markdown knowledge base + CLI tool + sync scripts + OpenClaw multi-agent system + web UI.
+Ruh AI's grep-able markdown knowledge base + CLI tool + sync scripts + OpenClaw multi-agent system + web UI.
 
 ## Project Structure
 
 ```
 company-docs/
 ├── knowledge-base/          # Markdown documentation store (git-tracked)
-│   ├── architecture/        # System design, infrastructure, tech stack, ADRs
-│   ├── repos/               # Per-repo documentation (auto-synced from GitHub)
-│   ├── linear/              # Sprint data, projects (auto-synced from Linear)
-│   ├── runbooks/            # Operational procedures
-│   ├── team/                # Ownership, conventions
-│   └── INDEX.md             # Auto-generated table of contents
+│   ├── index.md             # Global map — agents start here
+│   ├── navigation.md        # Agent navigation instructions
+│   ├── glossary.md          # Company terminology
+│   ├── architecture/        # System-level: overview, service map, data flow, communication
+│   ├── services/            # Per-service deep dives (overview, api, database, events, dependencies)
+│   │   ├── agent-platform/  # Core AI agent execution engine (Python)
+│   │   ├── agent-gateway/   # Sandbox orchestrator (TypeScript/Docker)
+│   │   ├── communication-service/
+│   │   └── ai-gateway/
+│   ├── repos/               # Code-level repo guides (directory structure, local dev)
+│   ├── data/                # Schemas, events, pipelines
+│   │   ├── schemas/         # conversations.md, agents.md
+│   │   ├── events/          # redis-streams.md, kafka-events.md, websocket-events.md
+│   │   └── pipelines/       # analytics.md
+│   ├── infra/               # kubernetes, ci-cd, environments, observability
+│   ├── workflows/           # End-to-end request flows (agent-chat-flow, agent-creation-flow)
+│   ├── runbooks/            # deployments, debugging, incident-response
+│   └── references/          # api-endpoints, environment-variables, feature-flags
 ├── cli/                     # docs-query CLI tool (bash + ripgrep)
 │   ├── bin/docs-query       # Main executable
 │   └── lib/                 # search.sh, index.sh, format.sh
@@ -35,10 +47,10 @@ docs-query search "query"                    # Multi-word OR search across all d
 docs-query search "deploy" --category runbooks  # Filter by category
 docs-query search --tag kubernetes           # Tag search
 docs-query search "auth" --json              # JSON output
-docs-query get runbooks/deploy-production.md # Get specific doc
+docs-query get services/agent-platform/overview.md  # Get specific doc
 docs-query list                              # List all docs
-docs-query list --category repos --json      # Filtered list
-docs-query meta architecture/system-overview.md --json  # Metadata only
+docs-query list --category services --json   # Filtered list
+docs-query meta services/agent-platform/overview.md --json  # Metadata only
 docs-query reindex                           # Rebuild INDEX.md
 
 # Web UI
@@ -67,7 +79,7 @@ Every `.md` file in `knowledge-base/` MUST start with YAML front-matter:
 ```yaml
 ---
 title: "Document Title"
-category: architecture    # architecture | repos | linear | runbooks | team
+category: architecture    # architecture | services | repos | data | infra | workflows | runbooks | references
 tags: [tag1, tag2]
 owner: "@username"
 last_updated: "YYYY-MM-DD"
@@ -75,13 +87,27 @@ source: manual            # manual | linear-sync | repo-sync | git-sync | extern
 ---
 ```
 
-- File names: lowercase, hyphens, no spaces (e.g., `deploy-production.md`)
-- ADR numbering: sequential in `architecture/adr/`
-- External links have `external_url` and `external_type` in front-matter
+- File names: lowercase, hyphens, no spaces (e.g., `agent-chat-flow.md`)
+- One topic per file, 100–300 lines max
+- Every doc ends with a `See Also:` section linking related files
+- Cross-link between documents rather than duplicating content
+
+### Knowledge Base Navigation
+
+Agents should follow this search order:
+
+```
+1. index.md → find the right section
+2. architecture/service-map.md → which services are involved
+3. services/<name>/overview.md → service details
+4. workflows/<flow>.md → how pieces connect
+5. data/events/ or data/schemas/ → data contracts
+6. repos/<name>.md → code navigation
+```
 
 ### Search Behavior
 
-The CLI splits multi-word queries into OR regex: `"onboarding setup"` becomes `onboarding|setup` matching any word. Results are not ranked — all matches returned flat.
+The CLI splits multi-word queries into OR regex: `"redis streams"` becomes `redis|streams` matching any word. Results are not ranked — all matches returned flat.
 
 ### Web UI
 
