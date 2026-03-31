@@ -1,6 +1,6 @@
 # Company Docs Suite
 
-Ruh AI's grep-able markdown knowledge base + CLI tool + sync scripts + OpenClaw multi-agent system + web UI.
+Ruh AI's grep-able markdown knowledge base + CLI tool + sync scripts + web UI.
 
 ## Project Structure
 
@@ -29,9 +29,6 @@ company-docs/
 │   ├── bin/docs-query       # Main executable
 │   └── lib/                 # search.sh, index.sh, format.sh
 ├── sync/                    # Data sync scripts (Linear, GitHub, git logs)
-├── openclaw/                # OpenClaw agent workspaces and config
-│   ├── openclaw.json        # Main config (5 agents: orchestrator, searcher, summarizer, syncer, writer)
-│   └── workspace-*/         # Each agent's SOUL.md, skills/, etc.
 └── web/                     # Next.js web UI
     └── src/
         ├── app/             # Pages + API routes
@@ -116,17 +113,6 @@ The CLI splits multi-word queries into OR regex: `"redis streams"` becomes `redi
 - Server-side git operations via `simple-git` (reads `COMPANY_DOCS_HOME`)
 - File CRUD auto-commits and pushes to GitHub
 - API routes: `/api/tree`, `/api/files`, `/api/directories`, `/api/git`, `/api/chat`
-
-### OpenClaw Agents
-
-5 agents in orchestrator pattern:
-- **orchestrator** (opus) — routes questions to sub-agents
-- **searcher** (haiku) — runs docs-query, returns raw results
-- **summarizer** (sonnet) — condenses documents
-- **syncer** (haiku) — runs sync scripts
-- **writer** (sonnet) — creates/updates docs, commits to git
-
-Config at `openclaw/openclaw.json`. Each agent has a workspace with `SOUL.md` and `skills/`.
 
 ## GitHub
 

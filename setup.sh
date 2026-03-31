@@ -16,7 +16,7 @@ if ! command -v yq >/dev/null 2>&1; then
     echo "  NOTE: yq not found (optional). JSON metadata will use fallback parser."
 fi
 if ! command -v node >/dev/null 2>&1; then
-    echo "  NOTE: node not found. Required only for OpenClaw gateway."
+    echo "  NOTE: node not found. Required only for the web UI."
 fi
 
 if [ ${#MISSING[@]} -gt 0 ]; then
@@ -84,11 +84,9 @@ echo ""
 echo "=== Setup Complete ==="
 echo "Knowledge base: $(pwd)/knowledge-base"
 echo "CLI tool: docs-query (check: docs-query list)"
-echo "OpenClaw config: $(pwd)/openclaw/openclaw.json"
 echo ""
 echo "Next steps:"
 echo "  1. Copy .env.example to .env and fill in your API keys"
 echo "  2. Add COMPANY_DOCS_HOME=\"$(pwd)\" to your shell profile"
 echo "  3. Add ~/.local/bin to your PATH if not already there"
 echo "  4. Write your first docs in knowledge-base/"
-echo "  5. Start OpenClaw: cd openclaw && openclaw gateway"
