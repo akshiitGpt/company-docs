@@ -1,0 +1,17 @@
+{
+  "name": "ruh-ai",
+  "owner": {
+    "name": "Ruh AI"
+  },
+  "plugins": [
+    {
+      "name": "company-docs",
+      "source": {
+        "source": "github",
+        "repo": "akshiitGpt/company-docs"
+      },
+      "description": "Ruh AI company knowledge base — search, navigate, and add docs",
+      "version": "1.0.0"
+    }
+  ]
+}
