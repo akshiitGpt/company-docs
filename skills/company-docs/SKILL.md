@@ -20,7 +20,42 @@ export KB="$(pwd)/.company-docs/knowledge-base"
 
 Verify: `find "$KB" -name '*.md' | wc -l` (should be 43 files).
 
-Pull latest: `cd .company-docs && git pull && cd ..`
+## Keeping Docs Up to Date
+
+**IMPORTANT: Always pull latest docs at the start of every session.**
+
+```bash
+cd .company-docs && git pull --ff-only && cd ..
+```
+
+### Auto-pull via Claude Code hook (recommended)
+
+Add this to your project's `.claude/settings.json` to auto-pull on every session start:
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": []
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd .company-docs && git pull --ff-only 2>/dev/null; true"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+This ensures docs are always fresh without manual intervention.
 
 ## Knowledge Base Structure
 
