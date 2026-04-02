@@ -3,8 +3,8 @@ title: "Agent Platform — Events"
 category: services
 tags: [agent-platform, events, kafka, redis-streams]
 owner: "@backend"
-last_updated: "2026-03-31"
-source: manual
+last_updated: "2026-04-02"
+source: repo
 ---
 
 # Agent Platform — Events
@@ -33,8 +33,7 @@ Stream: `{env}:agent:chat:responses:{conversation_id}-{request_id}`
 
 | Topic | Event | Data |
 |-------|-------|------|
-| `analytics-service-agent-activity-events` | Agent activity | Tool calls, errors, session data, model used |
-| `token-usage-events` | Token consumption | Input/output tokens, model, org_id, agent_id |
+| `analytics-service-agent-activity-events` | Agent activity | Tool calls (name, success/error, MCP details), stream errors |
 
 Kafka events are fire-and-forget — they do not block agent execution.
 

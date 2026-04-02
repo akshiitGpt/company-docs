@@ -3,8 +3,8 @@ title: "Agent Platform — Dependencies"
 category: services
 tags: [agent-platform, dependencies]
 owner: "@backend"
-last_updated: "2026-03-31"
-source: manual
+last_updated: "2026-04-02"
+source: repo
 ---
 
 # Agent Platform — Dependencies

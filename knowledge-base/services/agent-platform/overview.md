@@ -1,10 +1,10 @@
 ---
 title: "Agent Platform — Overview"
 category: services
-tags: [agent-platform, python, langraph, redis-streams]
+tags: [agent-platform, python, langgraph, redis-streams, deepagents]
 owner: "@backend"
-last_updated: "2026-03-31"
-source: manual
+last_updated: "2026-04-02"
+source: repo
 ---
 
 # Agent Platform

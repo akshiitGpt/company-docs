@@ -6,7 +6,7 @@ Ruh AI's grep-able markdown knowledge base. Clone into any project, search with 
 
 ```
 company-docs/
-├── knowledge-base/          # 43 markdown documents
+├── knowledge-base/          # 45 markdown documents
 │   ├── index.md             # Global map — start here
 │   ├── navigation.md        # Agent navigation instructions
 │   ├── glossary.md          # Company terminology
@@ -15,7 +15,8 @@ company-docs/
 │   │   ├── agent-platform/  # Core AI agent execution engine (Python)
 │   │   ├── agent-gateway/   # Sandbox orchestrator (TypeScript/Docker)
 │   │   ├── communication-service/
-│   │   └── ai-gateway/
+│   │   ├── ai-gateway/
+│   │   └── file-conversion/
 │   ├── repos/               # Code-level repo guides (directory structure, local dev)
 │   ├── data/                # Schemas, events, pipelines
 │   ├── infra/               # Kubernetes, CI/CD, environments, observability

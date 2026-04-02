@@ -1,16 +1,16 @@
 ---
 title: "agent-platform-v2 Repo"
 category: repos
-tags: [repo, agent-platform, python, poetry]
+tags: [repo, agent-platform, python, poetry, langgraph, redis-streams]
 owner: "@backend"
-last_updated: "2026-03-31"
-source: manual
-repo_url: "https://github.com/akshiitGpt/agent-platform-v2"
+last_updated: "2026-04-02"
+source: repo
+repo_url: "https://github.com/ruh-ai/agent-platform-v2"
 ---
 
 # agent-platform-v2
 
-GitHub: `github.com/akshiitGpt/agent-platform-v2`
+GitHub: `github.com/ruh-ai/agent-platform-v2`
 
 ## Directory Structure
 
@@ -31,6 +31,7 @@ app/
     redis_listener.py            # Main event listener (routes requests to agent/workflow)
     kafka_producer.py            # Kafka event publishing
     agent_fetch.py               # Fetches agent config from API Gateway
+    ruh_agent_checkpointer.py    # Agent state checkpointing
     db_client.py                 # MongoDB + PostgreSQL initialization
     stream_formatter.py          # LangGraph events → SSE format
     daytona_service.py           # Sandbox provisioning
@@ -42,6 +43,7 @@ app/
     logging_config.py            # Structured logging + OTEL correlation
     telemetry.py                 # OpenTelemetry setup
   utils/                         # Tracing, metrics, exceptions, Redis state store, GCS, MCP
+    mcp_client.py                # MCP (Model Context Protocol) client
   helper/                        # Stop signals, Daytona state, background tasks
   workflow_generation_graph/     # LangGraph workflow generation
   workflow_chat/                 # LangGraph workflow chat
@@ -60,7 +62,7 @@ scripts/                         # Utility scripts (test, cleanup, migration)
 
 ```bash
 # Prerequisites: Python 3.11+, Poetry, Docker (for Redis/Mongo/Qdrant)
-git clone https://github.com/akshiitGpt/agent-platform-v2
+git clone https://github.com/ruh-ai/agent-platform-v2
 cd agent-platform-v2
 cp .env.example .env            # Fill in API keys and service URLs
 poetry install
@@ -81,8 +83,10 @@ poetry run python -m app.main
 ## Testing
 
 ```bash
-poetry run pytest                          # All tests
-poetry run pytest tests/unit/              # Unit tests only
+make test-unit                             # Unit tests
+make test-integration                      # Integration tests
+make lint                                  # Linting
+make typecheck                             # Type checking
 poetry run pytest tests/ -k "test_redis"   # Pattern match
 ```
 

@@ -18,7 +18,7 @@ grep -qxF '.company-docs/' .gitignore 2>/dev/null || echo ".company-docs/" >> .g
 export KB="$(pwd)/.company-docs/knowledge-base"
 ```
 
-Verify: `find "$KB" -name '*.md' | wc -l` (should be 43 files).
+Verify: `find "$KB" -name '*.md' | wc -l` (should be 45 files).
 
 ## Keeping Docs Up to Date
 
